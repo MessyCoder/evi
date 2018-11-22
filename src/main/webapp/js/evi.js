@@ -12,7 +12,7 @@ $(function () {
         placeholder: "portlet-placeholder ui-corner-all"
     });
 
-
+    var keydown;
     var addSheetIcon = $("#add_sheet");
     addSheetIcon.on("click", function () {
 
@@ -34,12 +34,18 @@ $(function () {
                sheet_list_ul.find("li").removeClass("ui-selected");
                li.addClass("ui-selected");
            }
-       }).on("keyup", function (e) {
+       }).on("keydown", function(e){
+            keydown = e.keyCode;
+        }).on("keyup", function (e) {
            if (e.keyCode === 27) {
                // ESC
                inputFrame.remove();
                return;
-           } else if (e.keyCode === 13) {
+           } else if (e.keyCode === 13 && 13 == keydown) {
+
+               $.each(e, function(name){
+                   console.log(name + " : " + e[name]);
+               });
                // Enter
                var sheetName = input.val().trim();
                if (sheetName === "") {

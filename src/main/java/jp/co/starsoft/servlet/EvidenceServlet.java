@@ -32,7 +32,12 @@ public class EvidenceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String[] folderList = new File(getEvidencePath()).list((dir, name) -> !dir.isFile());
+        String[] folderList = new File(getEvidencePath()).list(new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                return new File(dir, name).isDirectory();
+            }
+        });
 
         req.setAttribute("folderList", folderList);
 

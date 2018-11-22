@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>jp.co.starsoft</groupId>
-    <artifactId>sql_inspection</artifactId>
+    <artifactId>evi</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
 
