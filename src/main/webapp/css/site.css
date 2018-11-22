@@ -1,0 +1,112 @@
+body {
+    font-family: ＭＳ 明朝, serif;
+}
+input {
+    font-family: ＭＳ 明朝, serif;
+}
+hr {
+    border-bottom-width: 0;
+    border-left-width: 0;
+}
+
+label {
+    width: 120px;
+    display: inline-block;
+}
+
+table td{
+    vertical-align: top;
+    border: 1px solid black;
+}
+
+table th{
+    vertical-align: top;
+    border: 1px solid black;
+    background-color: #ccc
+}
+
+table {
+    font-family: monospace;
+    font-size: 12pt;
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+div.evidence-operation-entry {
+    width: 200px;
+    height: 200px;
+    /*position: fixed;*/
+    /*border: solid black 1px;*/
+    float:left;
+    margin-right:10px;
+    display:inline-table;
+}
+div.operation-bar {
+    border-bottom:1px solid black;
+    padding:3px;
+    background-color:aliceblue;
+    text-align:right;
+
+}
+div.sheet-list {
+    height: 300px;
+    overflow-y: auto;
+
+}
+
+div.sheet-list input{
+    /*border:1px solid blue;*/
+    border: 0;
+    width: 150px;
+    margin-left: 5px;
+    font-size: 12pt;
+    outline: none;
+}
+
+ul.sheet-list-ul {
+    list-style-type: none;
+    padding-left: 0;
+    font-size: 12pt;
+    margin-top: 5px;
+}
+ul.sheet-list-ul div.input-frame {
+    border:1px solid blue;
+    box-shadow: 2px 1px 1px 0px rgba(0,0,0,0.4);
+    padding-left: 10px;
+}
+
+ul.sheet-list-ul li{
+    padding-left: 10px;
+    border: 1px solid #ffffff;
+}
+
+ul.sheet-list-ul li:hover{
+    border: 1px solid blue;
+    /*box-shadow: 1px 1px 1px 1px rgba(144,144,144,0.4);*/
+}
+
+
+ul.sheet-list-ul li.ui-selected {
+    background: #F39814;
+    color: white;
+}
+
+ul.sheet-list-ul li.ui-selecting {
+    background: #FECA40;
+}
+
+select.evidence-file-list {
+    width: 100%;
+    border:1px solid black;
+    margin-bottom:10px;
+    font-size:10pt;
+    font-family: ＭＳ 明朝, serif;
+}
+
+div#image-display {
+    width: 1050px;
+    height: fit-content;
+    /*border: 1px solid #cccccc;*/
+    /*padding: 5px;*/
+}
+
