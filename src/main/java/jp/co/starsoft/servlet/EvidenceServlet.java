@@ -1,6 +1,7 @@
 package jp.co.starsoft.servlet;
 
 import com.google.gson.Gson;
+import jp.co.starsoft.util.FileIO;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -12,87 +13,74 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 @WebServlet(name = "EvidenceServlet", urlPatterns = "/evidence")
-public class EvidenceServlet extends HttpServlet {
+public class EvidenceServlet extends GenericEvidenceServlet {
 
-    private static final Gson GSON = new Gson();
-
-    private String propertiesFilePath;
-
-    @Override
-    public void init() throws ServletException {
-        super.init();
-        propertiesFilePath = getServletContext().getRealPath("WEB-INF/config.properties");
-    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String[] folderList = new File(getEvidencePath()).list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return new File(dir, name).isDirectory();
-            }
-        });
-
-        req.setAttribute("folderList", folderList);
+        req.setAttribute("folderList", FileIO.getDirectoryContent(getEvidencePath()));
 
         req.getRequestDispatcher("evidence.jsp").forward(req, resp);
     }
 
 
+    /**
+     * 指定のエビデンスのシート内容を取得する。
+     * @param req
+     * @param resp
+     * @throws ServletException
+     * @throws IOException
+     */
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-        String evidence = req.getParameter("evidence");
-
-        if (evidence == null || evidence.trim().length() == 0) {
-            return;
-        }
-
-        File evidenceFolder = new File(getEvidencePath(), evidence);
-
-        List<String> content = new ArrayList<>();
-        try (BufferedReader reader =
-        new BufferedReader(
-                new InputStreamReader(
-                        new FileInputStream(
-                                new File(evidenceFolder, "content.txt")), StandardCharsets.UTF_8))) {
-
-            String line;
-
-            while ((line = reader.readLine()) != null) {
-//                char flg = line.charAt(0);
-//                String name = line.substring(1);
-
-                content.add(line);
-            }
-
-        }
-
-//        new FileReader(new File(evidenceFolder, "content.txt"), "UTF-8")
-
-        String[] folderList = new File(getEvidencePath(), evidence).list((dir, name) -> !dir.isFile());
-
+        String requestId = req.getParameter("requestId");
         resp.setHeader("Content-Type", "application/json; charset=UTF-8");
         PrintWriter writer = resp.getWriter();
-        writer.write(GSON.toJson(content));
+        if ("1".equals(requestId)) {
+            String evidence = req.getParameter("evidence");
 
-    }
+            writer.write(FileIO.getDirectoryContentAsJson(new File(getEvidencePath(), evidence)));
+        } else {
+
+            String evidence = req.getParameter("evidence");
+            String sheetName = req.getParameter("sheetName");
+
+            Map<String, String> result = new HashMap<>();
+            try {
+                boolean success = false;
+                if ("2".equals(requestId)) {
+                    success = FileIO.createNewSheet(new File(getEvidencePath(), evidence), sheetName);
+                } else if ("4".equals(requestId)) {
+                    success = FileIO.createNewSeparator(new File(getEvidencePath(), evidence), sheetName);
+                }
 
 
-    private String getEvidencePath() throws IOException {
+                if (success) {
+                    result.put("message", "ok");
+                } else {
+                    result.put("message", "failed");
+                }
+            } catch (IOException ex) {
+//                writer.write("{\"message\": \"failed\"}");
+                result.put("message", ex.getMessage());
+            }
 
-        Properties properties = new Properties();
+            writer.write(GSON.toJson(result));
 
-        try (Reader reader = new InputStreamReader(new FileInputStream(propertiesFilePath), StandardCharsets.UTF_8)) {
-            properties.load(reader);
         }
 
-        return properties.getProperty("evidence_path");
+
+
+
+
+
+
     }
+
+
 }

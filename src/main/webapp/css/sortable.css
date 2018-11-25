@@ -1,0 +1,35 @@
+#image-display {
+    /*float: left;*/
+    padding-bottom: 100px;
+    margin-left:225px ;
+}
+.portlet {
+    width: fit-content;
+    height: fit-content;
+    margin: 0 1em 1em 0;
+    padding: 0.3em;
+
+}
+.portlet-header {
+    padding: 0.2em 0.3em;
+    margin-bottom: 0.5em;
+    position: relative;
+    font-weight: normal;
+    font-size: 12px;
+}
+.portlet-toggle {
+    position: absolute;
+    top: 50%;
+    right: 0;
+    margin-top: -8px;
+}
+.portlet-placeholder {
+    border: 1px solid #cccccc;
+    background-color: sandybrown;
+    margin: 0 1em 1em 0;
+    height: 20px;
+}
+
+.portlet img {
+    box-shadow: 4px 6px 10px 2px rgba(0,0,0,0.3)
+}

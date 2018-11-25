@@ -1,54 +1,72 @@
 package jp.co.starsoft.servlet;
 
+import jp.co.starsoft.util.FileIO;
+
 import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.util.Base64;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 @WebServlet(name = "ImageUpload", urlPatterns = "/upload_image")
-public class ImageUploadServlet extends HttpServlet {
+public class ImageUploadServlet extends GenericEvidenceServlet {
+
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
+        resp.setHeader("Content-Type", "application/json; charset=UTF-8");
+        String evidence = req.getParameter("evidence");
+        String sheetName = req.getParameter("sheetName");
+
+        File evidenceFolder = new File(getEvidencePath(), evidence);
+        File sheetFolder = new File(evidenceFolder, sheetName);
+        TreeMap<String, String> imageList = FileIO.getImageList(sheetFolder);
+
+
+        resp.getWriter().write(GSON.toJson(imageList));
+    }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
+        resp.setHeader("Content-Type", "application/json; charset=UTF-8");
+        String evidence = req.getParameter("evidence");
+        String sheetName = req.getParameter("sheetName");
 
-//        Enumeration<String> headerNames = req.getHeaderNames();
-//
-//        while (headerNames.hasMoreElements()) {
-//            String header = headerNames.nextElement();
-//
-//            System.out.println(header + ": " + req.getHeader(header));
-//        }
-//
-//        ServletInputStream inputStream = req.getInputStream();
-//
-//        byte[] data = new byte[2048];
-//        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//        int length;
-//
-//        while ((length = inputStream.read(data)) != -1) {
-//            byteArrayOutputStream.write(data, 0, length);
-//        }
-//
-//        System.out.println(new String(byteArrayOutputStream.toByteArray()));
-//        byteArrayOutputStream.close();
 
         String image_data = req.getParameter("image_data");
         //System.out.println(image_data);
-        byte[] imageData = Base64.getDecoder().decode(image_data);
+//
+//        FileOutputStream fileOutputStream = new FileOutputStream("c:\\ICARD\\image.png");
+//        fileOutputStream.write(imageData);
+//        fileOutputStream.close();
+        Map<String, String> result = new HashMap<>();
+        File evidenceFolder = new File(getEvidencePath(), evidence);
 
-        FileOutputStream fileOutputStream = new FileOutputStream("c:\\ICARD\\image.png");
-        fileOutputStream.write(imageData);
-        fileOutputStream.close();
+        if (!evidenceFolder.exists()) {
+            if (!evidenceFolder.mkdirs()) {
+                result.put("message", "failed");
+            }
+        }
 
-        resp.getWriter().write(image_data);
+        File sheetFolder = new File(evidenceFolder, sheetName);
+        if (!sheetFolder.exists()) {
+            if (!sheetFolder.mkdir()) {
+                result.put("message", "failed");
+            }
+        }
+
+        String displayName = FileIO.addNewImage(sheetFolder, image_data);
+
+        result.put("message", "ok");
+        result.put("displayName", displayName);
+
+        resp.getWriter().write(GSON.toJson(result));
 
     }
 }
